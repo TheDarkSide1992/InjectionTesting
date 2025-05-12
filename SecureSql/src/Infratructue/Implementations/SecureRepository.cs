@@ -36,7 +36,7 @@ public class UnsecureRepository : IUnsecureRepository
         using var conn = _dataSource.OpenConnection();
         
         var result = await conn.QueryFirstAsync<UserDbModel>(sql, new {
-            id = newUser.Id,
+            id = Guid.NewGuid(),
             name = newUser.Name
         });
         
