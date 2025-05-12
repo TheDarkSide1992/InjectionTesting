@@ -1,0 +1,49 @@
+﻿services:
+  database:
+    image: postgres
+    command: -c 'max_connections=100'
+    ports:
+      - 5001:5432
+    restart: always
+    volumes:
+      - pgdatainjectedatabase:/var/lib/postgresql/data
+      - ./scripts/sql:/scripts/sql #Maops sql folder
+      - ./scripts/shell/sql-set-up.sh:/docker-entrypoint-initdb.d/sql-set-up.sh #runs initialisation scrips if  database doss sent exist
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: InjectDb
+        #remember to make this environmental secrets /|\
+        #secret looks like this:
+        #Host=localhost\;Database=InjectDb\;User Id=postgres\;Password=postgres\;Port=5001
+        #jdbc:postgresql://localhost:5001/InjectDb?user=postgres&password=postgres
+
+        
+  unsecureservice:
+    restart: always
+    build:
+      context: ./UnsecureSql
+      dockerfile: Dockerfile
+    ports:
+      - 8000:8000
+    environment:
+      - ASPNETCORE_URLS=http://+:8000 #Ths allows us 4to use swagger On the API
+      - pgconn=Host=database;Database=InjectDb;User Id=postgres;Password=postgres;Port=5432 #Connection string for DB
+    depends_on:
+      - database
+
+  secureservice:
+    restart: always
+    build:
+      context: ./SecureSql
+      dockerfile: Dockerfile
+    ports:
+      - 8001:8000
+    environment:
+      - ASPNETCORE_URLS=http://+:8000 #Ths allows us 4to use swagger On the API
+      - pgconn=Host=database;Database=InjectDb;User Id=postgres;Password=postgres;Port=5432 #Connection string for DB
+    depends_on:
+      - database
+        
+volumes:
+  pgdatainjectedatabase:
