@@ -2,7 +2,7 @@
 
 namespace Api.Controllers;
 
-public interface IUnsecureRepository
+public interface ISecureRepository
 {
     Task<UserModel> GetUserByName(string name);
     

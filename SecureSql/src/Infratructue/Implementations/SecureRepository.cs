@@ -4,11 +4,11 @@ using Infratructue.Mappers;
 using Infratructue.Models;
 using Npgsql;
 
-public class UnsecureRepository : IUnsecureRepository
+public class SecureRepository : ISecureRepository
 {
     private readonly NpgsqlDataSource _dataSource;
     
-    public UnsecureRepository(NpgsqlDataSource dataSource)
+    public SecureRepository(NpgsqlDataSource dataSource)
     {
         _dataSource = dataSource;
     }
