@@ -25,18 +25,50 @@ public class UnsecureRepository : IUnsecureRepository
         return result.ToModel();
     }
 
-    public Task<UserModel> CreateUser(UserModel user)
+    public async Task<UserModel> CreateUser(UserModel user)
     {
-        throw new NotImplementedException();
+        var newUser = user.ToDbModel();
+        var sql = $@"INSERT INTO users (id, name) 
+                VALUES (@id, @name) RETURNING
+                id as {nameof(UserDbModel.Id)},
+                name as {nameof(UserDbModel.Name)}";
+        
+        using var conn = _dataSource.OpenConnection();
+        
+        var result = await conn.QueryFirstAsync<UserDbModel>(sql, new {
+            id = newUser.Id,
+            name = newUser.Name
+        });
+        
+        return result.ToModel();
     }
 
-    public Task<bool> UpdateUser(UserModel user)
+    public async Task<UserModel> UpdateUser(UserModel user)
     {
-        throw new NotImplementedException();
+        var newUser = user.ToDbModel();
+        var sql = $@"UPDATE users SET name = @name WHERE id = @id
+                RETURNING
+                id as {nameof(UserDbModel.Id)},
+                name as {nameof(UserDbModel.Name)}";
+        
+        using var conn = _dataSource.OpenConnection();
+        
+        var result = await conn.QueryFirstAsync<UserDbModel>(sql, new {
+            id = newUser.Id,
+            name = newUser.Name
+        });
+
+        return result.ToModel();
     }
 
-    public Task<bool> DeleteUserById(Guid id)
+    public async Task<bool> DeleteUserById(Guid id)
     {
-        throw new NotImplementedException();
+        var sql = $@"DELETE FROM users WHERE id = @id";
+        
+        using var conn = _dataSource.OpenConnection();
+        
+        var result = await conn.ExecuteAsync(sql, new { id }) == 1;
+
+        return result;
     }
 }
