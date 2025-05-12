@@ -4,11 +4,11 @@ using Infratructue.Mappers;
 using Infratructue.Models;
 using Npgsql;
 
-public class UnsecureRepository : IUnsecureRepository
+public class SecureRepository : ISecureRepository
 {
     private readonly NpgsqlDataSource _dataSource;
     
-    public UnsecureRepository(NpgsqlDataSource dataSource)
+    public SecureRepository(NpgsqlDataSource dataSource)
     {
         _dataSource = dataSource;
     }
@@ -36,7 +36,7 @@ public class UnsecureRepository : IUnsecureRepository
         using var conn = _dataSource.OpenConnection();
         
         var result = await conn.QueryFirstAsync<UserDbModel>(sql, new {
-            id = newUser.Id,
+            id = Guid.NewGuid(),
             name = newUser.Name
         });
         
