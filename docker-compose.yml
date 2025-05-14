@@ -44,6 +44,29 @@
       - pgconn=Host=database;Database=InjectDb;User Id=postgres;Password=postgres;Port=5432 #Connection string for DB
     depends_on:
       - database
+  
+  unsecurenosql:
+    restart: always
+    build:
+      context: ./UnsecureNoSql
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:8000
+      - mongoconn=mongodb://mongodb:27017
+      - dbname=injectiontesting
+    ports:
+      - 8002:8000
+    depends_on:
+      - mongodb
         
+  mongodb:
+    image: mongodb/mongodb-community-server
+    ports:
+      - 27017:2017
+    volumes:
+      - mongoinjectedata:/var/lib/mongodb/data
+    
+    
 volumes:
   pgdatainjectedatabase:
+  mongoinjectedata:
