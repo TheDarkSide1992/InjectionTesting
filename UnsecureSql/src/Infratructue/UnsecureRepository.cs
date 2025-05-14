@@ -13,12 +13,20 @@ public class UnsecureRepository
         _dataSource = dataSource;
     }
     
-    public async Task<string> GetUserByName(string name)
+    public async Task<string> GetUsersByName(string name)
     {
         var sql = "SELECT * FROM users WHERE name = " + name;
         
         using var conn = _dataSource.OpenConnection();
-        return conn.QueryFirst(sql);
+        return (await conn.QueryAsync(sql)).ToString();
+    }
+    
+    public async Task<string> GetUsers()
+    {
+        var sql = "SELECT * FROM users";
+        
+        using var conn = _dataSource.OpenConnection();
+        return (await conn.QueryAsync(sql)).ToString();
     }
 
     public async Task<string> CreateUser(UserModel user)

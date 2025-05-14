@@ -13,7 +13,7 @@ public class SecureRepository : ISecureRepository
         _dataSource = dataSource;
     }
 
-    public async Task<UserModel> GetUserByName(string name)
+    public async Task<IEnumerable<UserModel>> GetUsersByName(string name)
     {
         var sql = $@"SELECT 
             id as {nameof(UserDbModel.Id)},
@@ -21,9 +21,23 @@ public class SecureRepository : ISecureRepository
             FROM users WHERE name = @name";
         
         using var conn = _dataSource.OpenConnection();
-        var result = conn.QueryFirst<UserDbModel>(sql, new { name });
-        return result.ToModel();
+        var result = await conn.QueryAsync<UserDbModel>(sql, new { name });
+        return result.Select(x => x.ToModel());
     }
+    
+    
+    public async Task<IEnumerable<UserModel>> GetUsers()
+    {
+        var sql = $@"SELECT 
+            id as {nameof(UserDbModel.Id)},
+            name as {nameof(UserDbModel.Name)}
+            FROM users";
+        
+        using var conn = _dataSource.OpenConnection();
+        var result = await conn.QueryAsync<UserDbModel>(sql);
+        return result.Select(x => x.ToModel());
+    }
+    
 
     public async Task<UserModel> CreateUser(UserModel user)
     {
