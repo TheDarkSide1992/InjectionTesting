@@ -13,38 +13,38 @@ public class UnsecureRepository
         _dataSource = dataSource;
     }
     
-    public async Task<string> GetUsersByName(string name)
+    public async Task<object> GetUsersByName(string name)
     {
         var sql = @$"SELECT * FROM users WHERE name = '{name}';" ;
         
         using var conn = _dataSource.OpenConnection();
-        return (await conn.QueryAsync(sql)).ToString();
+        return await conn.QueryAsync(sql);
     }
     
-    public async Task<string> GetUsers()
+    public async Task<object> GetUsers()
     {
         var sql = "SELECT * FROM users";
         
         using var conn = _dataSource.OpenConnection();
-        return (await conn.QueryAsync(sql)).ToString();
+        return await conn.QueryAsync(sql);
     }
 
-    public async Task<string> CreateUser(UserModel user)
+    public async Task<object> CreateUser(UserModel user)
     {
         var sql = @$"INSERT INTO users (userId, name) VALUES (  '{Guid.NewGuid()}', '{user.Name}') RETURNING *";
         
         using var conn = _dataSource.OpenConnection();
         
-        return await conn.QueryFirstAsync(sql);
+        return await conn.QueryAsync(sql);
     }
 
-    public async Task<string> UpdateUser(UserModel user)
+    public async Task<object> UpdateUser(UserModel user)
     {
         var sql = @$"UPDATE users SET name = '{user.Name}' WHERE userId = '{user.Id}' RETURNING *";
         
         using var conn = _dataSource.OpenConnection();
         
-        return await conn.QueryFirstAsync(sql);
+        return await conn.QueryAsync(sql);
     }
 
     public async Task<bool> DeleteUserById(Guid id)

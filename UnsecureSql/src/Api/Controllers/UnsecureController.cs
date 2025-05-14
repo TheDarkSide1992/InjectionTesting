@@ -18,8 +18,7 @@ public class UnsecureController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        //return Ok(await _UnsecureRepository.GetUsers());
-        return Ok();
+        return Ok(await _UnsecureRepository.GetUsers());
     } 
     
     [HttpGet]
@@ -27,7 +26,7 @@ public class UnsecureController : ControllerBase
     public async Task<IActionResult> GetByName([FromRoute] string name)
     {
         Console.WriteLine(Environment.GetEnvironmentVariable("pgconn")!);
-        return Ok(await _UnsecureRepository.GetUserByName(name));
+        return Ok(await _UnsecureRepository.GetUsersByName(name));
     } 
     
     [HttpPost]
