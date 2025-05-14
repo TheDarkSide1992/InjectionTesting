@@ -17,8 +17,8 @@
         #secret looks like this:
         #Host=localhost\;Database=InjectDb\;User Id=postgres\;Password=postgres\;Port=5001
         #jdbc:postgresql://localhost:5001/InjectDb?user=postgres&password=postgres
-
-        
+  
+  
   unsecureservice:
     restart: always
     build:
@@ -44,6 +44,15 @@
       - pgconn=Host=database;Database=InjectDb;User Id=postgres;Password=postgres;Port=5432 #Connection string for DB
     depends_on:
       - database
-        
+  
+  db-reset:
+    image: postgres
+    depends_on:
+      - database
+    entrypoint: ["/bin/bash", "/scripts/shell/sql-reset.sh"]
+    volumes:
+      - ./scripts/sql:/scripts/sql #Maops sql folder
+      - ./scripts/shell/sql-reset.sh:/scripts/shell/sql-reset.sh
+
 volumes:
   pgdatainjectedatabase:
