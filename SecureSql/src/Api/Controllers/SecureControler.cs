@@ -44,7 +44,7 @@ public class SecureController : ControllerBase
     
     [HttpDelete]
     [Route("{id}")]
-    public async Task<IActionResult> DelTete([FromRoute] Guid id)
+    public async Task<IActionResult> Delete([FromRoute] Guid id)
     {
         return Ok(await _secureRepository.DeleteUserById(id));
     } 
