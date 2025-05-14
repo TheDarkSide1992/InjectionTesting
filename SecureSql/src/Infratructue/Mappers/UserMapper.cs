@@ -8,7 +8,7 @@ public static class UserMapper
     {
         return new UserModel
         {
-            Id = dbModel.Id,
+            Id = new Guid(dbModel.Id),
             Name = dbModel.Name
         };
     }
@@ -18,7 +18,7 @@ public static class UserMapper
     {
         return new UserDbModel
         {
-            Id = model.Id,
+            Id = model.Id.ToString(),
             Name = model.Name
         };
     }

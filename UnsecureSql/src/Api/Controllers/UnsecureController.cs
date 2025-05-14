@@ -38,7 +38,7 @@ public class UnsecureController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] UserModel user)
     {
-        return Ok(await _UnsecureRepository.CreateUser(user));
+        return Ok(await _UnsecureRepository.UpdateUser(user));
     } 
     
     [HttpDelete]

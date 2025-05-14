@@ -44,13 +44,13 @@ public class SecureRepository : ISecureRepository
         var newUser = user.ToDbModel();
         var sql = $@"INSERT INTO users (userId, name) 
                 VALUES (@id, @name) RETURNING
-                id as {nameof(UserDbModel.Id)},
+                userId as {nameof(UserDbModel.Id)},
                 name as {nameof(UserDbModel.Name)}";
         
         using var conn = _dataSource.OpenConnection();
         
         var result = await conn.QueryFirstAsync<UserDbModel>(sql, new {
-            userId = Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             name = newUser.Name
         });
         
@@ -62,7 +62,7 @@ public class SecureRepository : ISecureRepository
         var newUser = user.ToDbModel();
         var sql = $@"UPDATE users SET name = @name WHERE userId = @id
                 RETURNING
-                id as {nameof(UserDbModel.Id)},
+                userId as {nameof(UserDbModel.Id)},
                 name as {nameof(UserDbModel.Name)}";
         
         using var conn = _dataSource.OpenConnection();
@@ -81,7 +81,7 @@ public class SecureRepository : ISecureRepository
         
         using var conn = _dataSource.OpenConnection();
         
-        var result = await conn.ExecuteAsync(sql, new { id }) == 1;
+        var result = await conn.ExecuteAsync(sql, new { id = id.ToString() }) == 1;
 
         return result;
     }
