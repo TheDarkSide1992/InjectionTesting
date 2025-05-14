@@ -1,3 +1,1 @@
-﻿DELETE
-FROM Users
-Where userId != '';
+﻿DROP TABLE IF EXISTS users
