@@ -25,7 +25,6 @@ public class SecureController : ControllerBase
     [Route("{name}")]
     public async Task<IActionResult> GetByName([FromRoute] string name)
     {
-        Console.WriteLine(Environment.GetEnvironmentVariable("pgconn")!);
         return Ok(await _secureRepository.GetUsersByName(name));
     } 
     
