@@ -18,16 +18,14 @@ public class SecureController : ControllerBase
     [HttpGet]
     public async Task<IActionResult> GetAll()
     {
-        //return Ok(await _UnsecureRepository.GetUsers());
-        return Ok();
+        return Ok(await _secureRepository.GetUsers());
     } 
     
     [HttpGet]
     [Route("{name}")]
     public async Task<IActionResult> GetByName([FromRoute] string name)
     {
-        Console.WriteLine(Environment.GetEnvironmentVariable("pgconn")!);
-        return Ok(await _secureRepository.GetUserByName(name));
+        return Ok(await _secureRepository.GetUsersByName(name));
     } 
     
     [HttpPost]
@@ -39,7 +37,7 @@ public class SecureController : ControllerBase
     [HttpPut]
     public async Task<IActionResult> Update([FromBody] UserModel user)
     {
-        return Ok(await _secureRepository.CreateUser(user));
+        return Ok(await _secureRepository.UpdateUser(user));
     } 
     
     [HttpDelete]

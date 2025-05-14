@@ -13,30 +13,44 @@ public class SecureRepository : ISecureRepository
         _dataSource = dataSource;
     }
 
-    public async Task<UserModel> GetUserByName(string name)
+    public async Task<IEnumerable<UserModel>> GetUsersByName(string name)
     {
         var sql = $@"SELECT 
-            id as {nameof(UserDbModel.Id)},
+            userId as {nameof(UserDbModel.Id)},
             name as {nameof(UserDbModel.Name)}
             FROM users WHERE name = @name";
         
         using var conn = _dataSource.OpenConnection();
-        var result = conn.QueryFirst<UserDbModel>(sql, new { name });
-        return result.ToModel();
+        var result = await conn.QueryAsync<UserDbModel>(sql, new { name });
+        return result.Select(x => x.ToModel());
     }
+    
+    
+    public async Task<IEnumerable<UserModel>> GetUsers()
+    {
+        var sql = $@"SELECT 
+            userId as {nameof(UserDbModel.Id)},
+            name as {nameof(UserDbModel.Name)}
+            FROM users";
+        
+        using var conn = _dataSource.OpenConnection();
+        var result = await conn.QueryAsync<UserDbModel>(sql);
+        return result.Select(x => x.ToModel());
+    }
+    
 
     public async Task<UserModel> CreateUser(UserModel user)
     {
         var newUser = user.ToDbModel();
-        var sql = $@"INSERT INTO users (id, name) 
+        var sql = $@"INSERT INTO users (userId, name) 
                 VALUES (@id, @name) RETURNING
-                id as {nameof(UserDbModel.Id)},
+                userId as {nameof(UserDbModel.Id)},
                 name as {nameof(UserDbModel.Name)}";
         
         using var conn = _dataSource.OpenConnection();
         
         var result = await conn.QueryFirstAsync<UserDbModel>(sql, new {
-            id = Guid.NewGuid(),
+            Id = Guid.NewGuid(),
             name = newUser.Name
         });
         
@@ -46,9 +60,9 @@ public class SecureRepository : ISecureRepository
     public async Task<UserModel> UpdateUser(UserModel user)
     {
         var newUser = user.ToDbModel();
-        var sql = $@"UPDATE users SET name = @name WHERE id = @id
+        var sql = $@"UPDATE users SET name = @name WHERE userId = @id
                 RETURNING
-                id as {nameof(UserDbModel.Id)},
+                userId as {nameof(UserDbModel.Id)},
                 name as {nameof(UserDbModel.Name)}";
         
         using var conn = _dataSource.OpenConnection();
@@ -63,11 +77,11 @@ public class SecureRepository : ISecureRepository
 
     public async Task<bool> DeleteUserById(Guid id)
     {
-        var sql = $@"DELETE FROM users WHERE id = @id";
+        var sql = $@"DELETE FROM users WHERE userId = @id";
         
         using var conn = _dataSource.OpenConnection();
         
-        var result = await conn.ExecuteAsync(sql, new { id }) == 1;
+        var result = await conn.ExecuteAsync(sql, new { id = id.ToString() }) == 1;
 
         return result;
     }

@@ -4,7 +4,9 @@ namespace Api.Controllers;
 
 public interface ISecureRepository
 {
-    Task<UserModel> GetUserByName(string name);
+    Task<IEnumerable<UserModel>> GetUsersByName(string name);
+
+    Task<IEnumerable<UserModel>> GetUsers();
     
     Task<UserModel> CreateUser(UserModel user);
     
