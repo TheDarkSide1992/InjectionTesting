@@ -16,7 +16,7 @@ public class SecureRepository : ISecureRepository
     public async Task<IEnumerable<UserModel>> GetUsersByName(string name)
     {
         var sql = $@"SELECT 
-            id as {nameof(UserDbModel.Id)},
+            userId as {nameof(UserDbModel.Id)},
             name as {nameof(UserDbModel.Name)}
             FROM users WHERE name = @name";
         
@@ -29,7 +29,7 @@ public class SecureRepository : ISecureRepository
     public async Task<IEnumerable<UserModel>> GetUsers()
     {
         var sql = $@"SELECT 
-            id as {nameof(UserDbModel.Id)},
+            userId as {nameof(UserDbModel.Id)},
             name as {nameof(UserDbModel.Name)}
             FROM users";
         
@@ -42,7 +42,7 @@ public class SecureRepository : ISecureRepository
     public async Task<UserModel> CreateUser(UserModel user)
     {
         var newUser = user.ToDbModel();
-        var sql = $@"INSERT INTO users (id, name) 
+        var sql = $@"INSERT INTO users (userId, name) 
                 VALUES (@id, @name) RETURNING
                 id as {nameof(UserDbModel.Id)},
                 name as {nameof(UserDbModel.Name)}";
@@ -50,7 +50,7 @@ public class SecureRepository : ISecureRepository
         using var conn = _dataSource.OpenConnection();
         
         var result = await conn.QueryFirstAsync<UserDbModel>(sql, new {
-            id = Guid.NewGuid(),
+            userId = Guid.NewGuid(),
             name = newUser.Name
         });
         
@@ -60,7 +60,7 @@ public class SecureRepository : ISecureRepository
     public async Task<UserModel> UpdateUser(UserModel user)
     {
         var newUser = user.ToDbModel();
-        var sql = $@"UPDATE users SET name = @name WHERE id = @id
+        var sql = $@"UPDATE users SET name = @name WHERE userId = @id
                 RETURNING
                 id as {nameof(UserDbModel.Id)},
                 name as {nameof(UserDbModel.Name)}";
@@ -77,7 +77,7 @@ public class SecureRepository : ISecureRepository
 
     public async Task<bool> DeleteUserById(Guid id)
     {
-        var sql = $@"DELETE FROM users WHERE id = @id";
+        var sql = $@"DELETE FROM users WHERE userId = @id";
         
         using var conn = _dataSource.OpenConnection();
         

@@ -15,7 +15,7 @@ public class UnsecureRepository
     
     public async Task<string> GetUsersByName(string name)
     {
-        var sql = "SELECT * FROM users WHERE name = " + name;
+        var sql = @$"SELECT * FROM users WHERE name = '{name}';" ;
         
         using var conn = _dataSource.OpenConnection();
         return (await conn.QueryAsync(sql)).ToString();
@@ -31,7 +31,7 @@ public class UnsecureRepository
 
     public async Task<string> CreateUser(UserModel user)
     {
-        var sql = "INSERT INTO users (id, name) VALUES (" + Guid.NewGuid() +", " + user.Name + ") RETURNING *";
+        var sql = @$"INSERT INTO users (userId, name) VALUES (  '{Guid.NewGuid()}', '{user.Name}') RETURNING *";
         
         using var conn = _dataSource.OpenConnection();
         
@@ -40,7 +40,7 @@ public class UnsecureRepository
 
     public async Task<string> UpdateUser(UserModel user)
     {
-        var sql = "UPDATE users SET name = " + user.Name + " WHERE id = " + user.Id + " RETURNING *";
+        var sql = @$"UPDATE users SET name = '{user.Name}' WHERE userId = '{user.Id}' RETURNING *";
         
         using var conn = _dataSource.OpenConnection();
         
@@ -49,7 +49,7 @@ public class UnsecureRepository
 
     public async Task<bool> DeleteUserById(Guid id)
     {
-        var sql = $@"DELETE FROM users WHERE id = " + id;
+        var sql = $@"DELETE FROM users WHERE userId = '{id}'";
         
         using var conn = _dataSource.OpenConnection();
         
