@@ -17,7 +17,10 @@ public class MongoUserRepo : IMongoUserRepo
     
     public async Task<List<User>> GetUserByName(string name)
     {
-        var filter = BsonDocument.Parse("{ \"Name\": \"" + name + "\" }");
+        var filter = new BsonDocument
+        {
+            {"Name", name}
+        };
         var user = await _mongoContext._users.Find<UserDbModel>(filter).ToListAsync();
         var userList = new List<User>();
         foreach (var userDbModel in user)

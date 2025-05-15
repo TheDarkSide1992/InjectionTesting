@@ -62,7 +62,7 @@
   mongodb:
     image: mongodb/mongodb-community-server
     ports:
-      - 27017:2017
+      - 27017:27017
     volumes:
       - mongoinjectedata:/var/lib/mongodb/data
     
