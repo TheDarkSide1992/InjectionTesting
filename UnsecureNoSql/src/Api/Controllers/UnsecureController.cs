@@ -25,7 +25,7 @@ public class UnsecureController : ControllerBase
         return result != null ? Ok(result) : NotFound();
     }
     
-    [HttpPost]
+    [HttpPut]
     [Route("Update")]
     public async Task<IActionResult> UpdateUser([FromBody] User user)
     {
