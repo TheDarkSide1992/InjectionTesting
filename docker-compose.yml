@@ -54,5 +54,29 @@
       - ./scripts/sql:/scripts/sql #Maops sql folder
       - ./scripts/shell/sql-reset.sh:/scripts/shell/sql-reset.sh
 
+  
+  unsecurenosql:
+    restart: always
+    build:
+      context: ./UnsecureNoSql
+      dockerfile: Dockerfile
+    environment:
+      - ASPNETCORE_URLS=http://+:8000
+      - mongoconn=mongodb://mongodb:27017
+      - dbname=injectiontesting
+    ports:
+      - 8002:8000
+    depends_on:
+      - mongodb
+        
+  mongodb:
+    image: mongodb/mongodb-community-server
+    ports:
+      - 27017:27017
+    volumes:
+      - mongoinjectedata:/var/lib/mongodb/data
+    
+    
 volumes:
   pgdatainjectedatabase:
+  mongoinjectedata:
